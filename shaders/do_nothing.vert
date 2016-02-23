@@ -1,13 +1,12 @@
-attribute vec4 position;
-// the vertex position and color are passed from an opengl program
-attribute vec4 color;
+#version 130
 
-varying vec4 pcolor;
-// this is the output variable to the fragment shader
-// this shader just pass the vertex position and color along, doesn't actually do anything
-// Note that this means the vertex position is assumed to be already in clip space
+in vec3 in_Position;
+in vec3 in_Normal;
+in vec3 in_Color;
+
+out vec4 pass_Color;
 
 void main(){
-	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
-	pcolor = gl_Color;
+	gl_Position = gl_ModelViewProjectionMatrix * vec4(in_Position, 1);
+	pass_Color = vec4( in_Color, 1 );
 }

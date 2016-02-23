@@ -1,4 +1,4 @@
-//#version 130 core
+#version 130
 
 uniform vec4 set_Color;
 

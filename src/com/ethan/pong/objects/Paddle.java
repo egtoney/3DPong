@@ -7,7 +7,8 @@ import com.charon.global.graphics.opengl.OpenGLFrame;
 import com.charon.global.graphics.opengl.OpenGLGraphics;
 import com.charon.global.graphics.opengl.OpenGLRenderable;
 import com.charon.global.graphics.opengl.shaders.ShaderVariableException;
-import com.charon.global.graphics.opengl.shapes.Rectangle;
+import com.charon.global.graphics.opengl.shapes.RectangularPrism;
+import com.charon.global.util.Vector;
 import com.charon.global.world.RectangularObject;
 
 public class Paddle extends RectangularObject implements OpenGLRenderable{
@@ -18,11 +19,10 @@ public class Paddle extends RectangularObject implements OpenGLRenderable{
 	};
 	
 	private PaddleControlls controller;
-	private float pps = 700; // pixels/second
+	private float pps = 6; // units/second
 	
-	public Paddle(OpenGLFrame frame, PlayerSlot player, float[] location) {
-		super(300, 50, 50, location, 1);
-//		super(0.5f, 0.25f, 0.25f, location, 1);
+	public Paddle(OpenGLFrame frame, PlayerSlot player, Vector location) {
+		super(3, 1, 1, location, 1);
 		
 		switch( player ){
 		case PLAYER_ONE:
@@ -39,9 +39,7 @@ public class Paddle extends RectangularObject implements OpenGLRenderable{
 	@Override
 	public void render(OpenGLGraphics graphics) {
 		try {
-			graphics.shader_manager.getShaderVariable("set_Color").setValue(new float[] { 1, 0, 0, 1 });
-			
-			Rectangle.fillRectangle(graphics, "in_Position", getLocation()[0], getLocation()[1], getWidth(), getHeight());
+			RectangularPrism.fillPrism(graphics, getX(), getY(), getZ(), getWidth(), getHeight(), getDepth());
 			
 		} catch (ShaderVariableException e) {
 			e.printStackTrace();
@@ -52,27 +50,27 @@ public class Paddle extends RectangularObject implements OpenGLRenderable{
 		float dy = 0;
 		
 		if( controller.key_state[PaddleControlls.KEY_UP] ){
-			dy--;
+			dy++;
 		}
 		if( controller.key_state[PaddleControlls.KEY_DOWN] ){
-			dy++;
+			dy--;
 		}
 		
 		dy *= pps*seconds_passed;
 		
-		float[] location = getLocation();
+		Vector location = getLocation();
 		
 		if( dy > 0 ){
-			if( location[1]+getHeight()+dy >= 850 ){
-				dy = 850.0f - location[1] - getHeight();
+			if( location.y+getHeight()+dy >= 9 ){
+				dy = 9.0f - location.y - getHeight();
 			}
 		}else if( dy < 0 ){
-			if( location[1]+dy <= 50 ){
-				dy = 50.0f - location[1];
+			if( location.y+dy <= 0 ){
+				dy = 0.0f - location.y;
 			}
 		}
 		
-		this.move(new float[] {0, dy, 0});
+		this.move(new Vector (0, dy, 0));
 	}
 	
 	private class PaddleControlls extends GLFWKeyCallback {
